@@ -25,6 +25,7 @@ ipcRenderer.on('find-text', (_event, text) => {
     const end = editor.posFromIndex(index + text.length);
     editor.focus();
     editor.setSelection(start, end);
+
   }
 });
 
