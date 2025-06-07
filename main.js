@@ -1,6 +1,41 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const fs = require('fs');
 
+function openSearchWindow(parent) {
+  const searchWin = new BrowserWindow({
+    width: 300,
+    height: 100,
+    parent,
+    modal: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  const html = `<!DOCTYPE html>
+  <html>
+    <body>
+      <input id="search-input" type="text" autofocus />
+      <button id="find-btn">Find</button>
+      <script>
+        const { ipcRenderer } = require('electron');
+        const input = document.getElementById('search-input');
+        document.getElementById('find-btn').addEventListener('click', () => {
+          ipcRenderer.send('find-text', input.value);
+        });
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            ipcRenderer.send('find-text', input.value);
+          }
+        });
+      <\/script>
+    </body>
+  </html>`;
+
+  searchWin.loadURL('data:text/html,' + encodeURIComponent(html));
+}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
@@ -65,8 +100,18 @@ function createWindow() {
         { role: 'paste' },
         { role: 'selectAll' }
       ]
+    },
+    {
+      label: 'Find',
+      submenu: [
+        {
+          label: 'Find...',
+          click: () => openSearchWindow(win)
+        }
+      ]
     }
   ];
+
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
@@ -83,5 +128,12 @@ ipcMain.on('save-content', async (_event, data) => {
         console.error(err);
       }
     });
+  }
+});
+
+ipcMain.on('find-text', (_event, text) => {
+  const focused = BrowserWindow.getFocusedWindow();
+  if (focused) {
+    focused.getParentWindow()?.webContents.send('find-text', text);
   }
 });

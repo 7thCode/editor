@@ -9,3 +9,11 @@ ipcRenderer.on('file-opened', (_event, data) => {
 ipcRenderer.on('request-save', () => {
   ipcRenderer.send('save-content', textarea.value);
 });
+
+ipcRenderer.on('find-text', (_event, text) => {
+  const index = textarea.value.indexOf(text);
+  if (index !== -1) {
+    textarea.focus();
+    textarea.setSelectionRange(index, index + text.length);
+  }
+});
