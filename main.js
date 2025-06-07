@@ -39,6 +39,10 @@ function createWindow() {
           click: () => {
             win.webContents.send('request-save');
           }
+        },
+        {
+          label: 'Quit',
+          role: 'quit'
         }
       ]
     }
