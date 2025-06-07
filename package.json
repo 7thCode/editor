@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package": "electron-packager . electron-text-editor --out dist --overwrite"
   },
   "devDependencies": {
-    "electron": "^28.2.0"
+    "electron": "^28.2.0",
+    "electron-packager": "^17.1.1"
   }
 }
