@@ -1,6 +1,8 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const fs = require('fs');
 
+let currentFilePath = null;
+
 function openSearchWindow(parent) {
   const searchWin = new BrowserWindow({
     width: 320,
@@ -72,7 +74,8 @@ function createWindow() {
               defaultPath: 'Untitled.txt'
             });
             if (!canceled && filePath) {
-              fs.writeFile(filePath, '', 'utf8', err => {
+              currentFilePath = filePath;
+              fs.writeFile(currentFilePath, '', 'utf8', err => {
                 if (err) {
                   console.error(err);
                   return;
@@ -89,7 +92,8 @@ function createWindow() {
               properties: ['openFile']
             });
             if (!canceled && filePaths && filePaths[0]) {
-              fs.readFile(filePaths[0], 'utf8', (err, data) => {
+              currentFilePath = filePaths[0];
+              fs.readFile(currentFilePath, 'utf8', (err, data) => {
                 if (err) {
                   console.error(err);
                   return;
@@ -97,6 +101,12 @@ function createWindow() {
                 win.webContents.send('file-opened', data);
               });
             }
+          }
+        },
+        {
+          label: 'Save',
+          click: () => {
+            win.webContents.send('request-save-current');
           }
         },
         {
@@ -151,7 +161,25 @@ ipcMain.on('save-content', async (_event, data) => {
         console.error(err);
       }
     });
+    currentFilePath = filePath;
   }
+});
+
+ipcMain.on('save-current', async (_event, data) => {
+  if (!currentFilePath) {
+    const { canceled, filePath } = await dialog.showSaveDialog({
+      defaultPath: 'Untitled.txt'
+    });
+    if (canceled || !filePath) {
+      return;
+    }
+    currentFilePath = filePath;
+  }
+  fs.writeFile(currentFilePath, data, 'utf8', err => {
+    if (err) {
+      console.error(err);
+    }
+  });
 });
 
 ipcMain.on('find-text', (_event, text) => {

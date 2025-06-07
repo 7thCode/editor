@@ -10,6 +10,10 @@ ipcRenderer.on('request-save', () => {
   ipcRenderer.send('save-content', textarea.value);
 });
 
+ipcRenderer.on('request-save-current', () => {
+  ipcRenderer.send('save-current', textarea.value);
+});
+
 ipcRenderer.on('find-text', (_event, text) => {
   const index = textarea.value.indexOf(text);
   if (index !== -1) {
