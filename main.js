@@ -3,8 +3,8 @@ const fs = require('fs');
 
 function openSearchWindow(parent) {
   const searchWin = new BrowserWindow({
-    width: 300,
-    height: 100,
+    width: 320,
+    height: 120,
     parent,
     modal: true,
     webPreferences: {
@@ -16,13 +16,18 @@ function openSearchWindow(parent) {
   const html = `<!DOCTYPE html>
   <html>
     <body>
-      <input id="search-input" type="text" autofocus />
+      <input id="search-input" type="text" style="width:260px" autofocus />
       <button id="find-btn">Find</button>
+      <button id="close-btn">Close</button>
       <script>
         const { ipcRenderer } = require('electron');
         const input = document.getElementById('search-input');
+
         document.getElementById('find-btn').addEventListener('click', () => {
           ipcRenderer.send('find-text', input.value);
+        });
+        document.getElementById('close-btn').addEventListener('click', () => {
+          window.close();
         });
         input.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
