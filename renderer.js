@@ -17,3 +17,7 @@ ipcRenderer.on('find-text', (_event, text) => {
     textarea.setSelectionRange(index, index + text.length);
   }
 });
+
+ipcRenderer.on('new-file', () => {
+  textarea.value = '';
+});
