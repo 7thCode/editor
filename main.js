@@ -13,9 +13,17 @@ function createWindow() {
 
   win.loadFile('index.html');
 
+  const menuLabel = 'File';
+
   const template = [
     {
-      label: 'File',
+      label: 'Editor',
+      submenu: [
+        { label: 'About', role: 'about' }
+      ]
+    },
+    {
+      label: menuLabel,
       submenu: [
         {
           label: 'Load',
@@ -45,9 +53,20 @@ function createWindow() {
           role: 'quit'
         }
       ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectAll' }
+      ]
     }
   ];
-
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
