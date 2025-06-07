@@ -67,8 +67,19 @@ function createWindow() {
       submenu: [
         {
           label: 'New...',
-          click: () => {
-            win.webContents.send('new-file');
+          click: async () => {
+            const { canceled, filePath } = await dialog.showSaveDialog(win, {
+              defaultPath: 'Untitled.txt'
+            });
+            if (!canceled && filePath) {
+              fs.writeFile(filePath, '', 'utf8', err => {
+                if (err) {
+                  console.error(err);
+                  return;
+                }
+                win.webContents.send('new-file');
+              });
+            }
           }
         },
         {
